@@ -29,6 +29,7 @@ Tarayıcı test betiği Windows'ta kurulu Chrome'u bulur. Başka bir ortamda `np
 
 ## Kullanım
 
+- Özelliklerin yanındaki **?** düğmesi kısa bir açıklama açar. Dışarı tıklamak, Escape veya sayfayı kaydırmak açıklamayı kapatır.
 - Tekerlek imleçte yakınlaştırır; sürükleme kamerayı kaydırır. Dokunmatik iki parmak pinch desteklenir. Tuval `touch-action: none` kullanır; çevresindeki sayfa kaydırılabilir.
 - Tuvale Tab ile odaklanın: `+` / `−` zoom, oklar kaydırma, `H` ana görünüm, `B` bir önceki kamera. Her kümenin kamera geçmişi bağımsızdır; en son 50 görünüm tutulur.
 - Mandelbrot'ta bir tık c seçer. “Julia noktası seç” açıkken sürükleyerek c seçilir. Bölünmüş ekran iki kümenin bağımsız kameralarını birlikte gösterir.
@@ -52,6 +53,8 @@ src/engine/fractal.worker.ts asenkron parça hesabı ve iptal
 src/components/FractalView.tsx  kamera girdileri ve kademeli çizim
 src/components/OrbitPanel.tsx   yörünge çizimi, tablo ve CSV
 src/components/BenchmarkPanel.tsx  sabit koşullu ölçümler
+src/components/Help.tsx      soru işareti düğmesi ve açılır açıklama
+src/data/help.ts             özellik açıklama metinleri
 src/data/experiments.ts      sekiz deney ve uygulanabilir başlangıçlar
 src/App.tsx                 oturum, ayarlar, sayfalar ve dışa aktarım
 tests/                      çekirdek, UI ve ölçüm regresyon testleri
@@ -88,7 +91,7 @@ Canlı önizleme için girişler 70 ms süzülür; çok hızlı sürekli hareket
 
 ## Doğrulama sonuçları
 
-30 Ekim 2026 düzeltmelerinden sonra aynı bilgisayarda: `vitest run` **3 dosyada 55 test geçti**, TypeScript kontrolü ve üretim derlemesi başarılı, üretim `dist` üzerinde `scripts/browser-test.mjs` **21 kontrol geçti, JavaScript/HTTP hatası 0**.
+30 Ekim 2026 düzeltmelerinden sonra aynı bilgisayarda: `vitest run` **3 dosyada 56 test geçti**, TypeScript kontrolü ve üretim derlemesi başarılı, üretim `dist` üzerinde `scripts/browser-test.mjs` **22 kontrol geçti, JavaScript/HTTP hatası 0**.
 
 
 - `pnpm run build`: **TypeScript kontrolü ve Vite üretim derlemesi başarılı**.

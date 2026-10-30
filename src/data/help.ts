@@ -1,0 +1,25 @@
+export const helpTopics={
+  setType:{title:'Küme türü',text:'Mandelbrot her c değeri için aynı başlangıçtan (z₀ = 0) yola çıkar; bir tür haritadır. Julia tek bir c değerini sabit tutar ve pikseli başlangıç yapar. Mandelbrot üzerinde seçtiğin nokta Julia’nın biçimini belirler.'},
+  split:{title:'Bölünmüş görünüm',text:'Mandelbrot ve Julia’yı birlikte gösterir. Mandelbrot’a tıkladığında Julia hemen değişir. İki görünümün yakınlaştırması birbirinden bağımsızdır.'},
+  iterations:{title:'İterasyon sınırı',text:'Her nokta için en fazla kaç adım hesaplanacağını belirler. Arttıkça kıyılar keskinleşir, hesap uzar. Çok yakınlaştığında yükseltmek işe yarar, ama sayısal hassasiyet sınırını aşmaz.'},
+  radius:{title:'Kaçış yarıçapı',text:'|z| bu değeri geçince nokta “kaçtı” sayılır. Renkleri ve sınırdaki bazı pikselleri değiştirebilir, genel şekil çoğunlukla aynı kalır. Julia’da gerekirse güvenli bir alt sınır otomatik uygulanır.'},
+  resolution:{title:'Çözünürlük',text:'Kaç piksel hesaplanacağını belirler. 0,5× hızlı ama bulanıktır. 1,5× keskindir, fakat yaklaşık 2,25 kat piksel hesaplar.'},
+  samples:{title:'Örnekleme',text:'4 seçilirse her piksel dört noktadan hesaplanıp ortalanır. Tırtıklı kenarlar yumuşar, hesap yaklaşık dört katına çıkar.'},
+  palette:{title:'Renk paleti',text:'Kaçış süresini renge çevirir. Yalnızca görünümü değiştirir, matematiksel şekli değil. Klasik bantlar tam adım sayısını, diğerleri yumuşak geçişi kullanır.'},
+  cycle:{title:'Renk döngüsü',text:'Renk skalasını kaydırır, böylece aynı noktalar farklı renklere denk gelir. Şekil değişmez.'},
+  brightness:{title:'Parlaklık',text:'Renkleri açar veya koyulaştırır. Kaçmayan siyah bölgeler siyah kalır.'},
+  animate:{title:'Yavaş renk hareketi',text:'Renk döngüsünü kendiliğinden ilerletir. Görüntü 2,4 saniyede bir yeniden hesaplanır, bu yüzden ağır ayarlarda kapalı tutmak daha rahattır.'},
+  juliaParameter:{title:'Julia parametresi',text:'Julia’nın biçimini belirleyen c sayısıdır. Elle girebilir, hazır örneklerden birini seçebilir veya Mandelbrot üzerinde tıklayabilirsin.'},
+  saving:{title:'Kayıt ve gelişmiş ayarlar',text:'JSON ayarları ve iki kamerayı dosyaya kaydeder, sonra geri yükler. “Tüm ayarları sıfırla” her şeyi başlangıca döndürür.'},
+  optimize:{title:'Kardioid / bulb testi',text:'Mandelbrot’un en büyük iki siyah bölgesini adım adım hesaplamadan tanır. Görüntü aynı kalırken genel görünüm hızlanır.'},
+  pickJulia:{title:'Julia noktası seç',text:'Açıkken Mandelbrot üzerinde sürükleyerek c değerini canlı değiştirirsin, görünüm kaymaz. Kapalıyken de tek tıklama c’yi seçer.'},
+  renderControls:{title:'Durdur ve Yeniden çiz',text:'Durdur süren hesabı keser, kamerayı oynatsan da yeni çizim yapılmaz. Devam et hesabı yeniden başlatır. Yeniden çiz aynı ayarlarla baştan hesaplar.'},
+  pulse:{title:'Hesaplama nabzı',text:'Son çizimin boyutunu, süresini ve iterasyon sınırını gösterir. Hassasiyet noktası sarıya dönerse sayısal sınıra yaklaşmışsındır. Alttaki çubuklar son çizimlerin süreleridir.'},
+  point:{title:'Nokta',text:'İmlecin altındaki noktanın koordinatını ve kaçıp kaçmadığını gösterir. Aşağıda seçili c, kamera bilgileri ve gezilecek hazır rotalar bulunur.'},
+  orbit:{title:'Yörünge',text:'Seçili c için bir başlangıç noktasının adım adım izlediği yolu çizer. “Yakın başlangıcı karşılaştır” açıkken iki yakın yörüngenin ne kadar ayrıldığını tablodan görürsün. Tablo CSV olarak indirilebilir.'},
+  measure:{title:'Ölçüm',text:'Aynı kamerada 2 çözünürlük ve 3 iterasyonla 6 çizim yapıp gerçek süreleri karşılaştırır. Sonuç bilgisayara ve bakılan bölgeye bağlıdır. Genel görünümde iterasyon süreyi pek değiştirmeyebilir.'},
+  critical:{title:'Julia parametresi ve kritik yörünge',text:'c değerini buradan da değiştirebilirsin. Kritik yörünge z₀ = 0’dan başlar. Kaçarsa Julia kümesi toz gibi dağılır. Bu sınırda kaçmazsa küme bağlı olabilir, ama sonlu hesap bunu kanıtlamaz.'},
+  camera:{title:'Kamera',text:'Görünümün merkezini ve yatay genişliğini gösterir. Yakınlaştırma, başlangıç görünümüne göre kaç kat yaklaştığını söyler.'},
+  routes:{title:'Keşif rotası',text:'Tek tıkla ilginç bir bölgeye gider. Önceki görünüme tuvalin altındaki geri düğmesiyle dönebilirsin.'}
+};
+export type HelpTopic=keyof typeof helpTopics;
