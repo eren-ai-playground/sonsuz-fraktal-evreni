@@ -1,14 +1,26 @@
 import { useEffect,useRef,useState } from 'react';
 import type { Camera,Complex,Kind,Metric,Settings,TileMessage } from '../core/types';
-import { pan,precision,toComplex,toPixel,zoomAt } from '../core/camera';
+import { exportCamera,pan,precision,toComplex,toPixel,zoomAt } from '../core/camera';
+import { download } from '../core/session';
+import { exportImage } from '../engine/export';
 import { RenderGate } from '../engine/render';
 import { Icon } from './Icons';
+const exportSizes=[{name:'Full HD',width:1920,height:1080},{name:'4K',width:3840,height:2160}];
 type Props={kind:Kind;camera:Camera;c:Complex;settings:Settings;paused:boolean;revision:number;selecting:boolean;onStart:()=>void;onCamera:(c:Camera)=>void;onSelect?:(c:Complex)=>void;onHover:(c:Complex)=>void;onMetric:(m:Metric)=>void;onStatus:(kind:Kind,done:boolean)=>void;onHome:()=>void;onBack:()=>void;canBack:boolean};
 export function FractalView(p:Props) {
   const canvas=useRef<HTMLCanvasElement>(null),container=useRef<HTMLDivElement>(null),worker=useRef<Worker|null>(null),gate=useRef(new RenderGate()),latest=useRef(p);latest.current=p;
   const [size,setSize]=useState({w:600,h:520}),[progress,setProgress]=useState(0),[stage,setStage]=useState('Hazırlanıyor'),[error,setError]=useState('');
   const [duration,setDuration]=useState(0);const points=useRef(new Map<number,{x:number;y:number}>()),gesture=useRef({distance:0,moved:false,startX:0,startY:0});
   const wheelTimer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined);
+  const [saveOpen,setSaveOpen]=useState(false),[exporting,setExporting]=useState<{name:string;progress:number}|null>(null);const saveMenu=useRef<HTMLDivElement>(null),cancelExport=useRef<(()=>void)|null>(null);
+  useEffect(()=>()=>cancelExport.current?.(),[]);
+  useEffect(()=>{
+    if(!saveOpen)return;
+    const pointer=(event:PointerEvent)=>{if(!saveMenu.current?.contains(event.target as Node))setSaveOpen(false);};
+    const key=(event:KeyboardEvent)=>{if(event.key==='Escape')setSaveOpen(false);};
+    document.addEventListener('pointerdown',pointer);document.addEventListener('keydown',key);
+    return()=>{document.removeEventListener('pointerdown',pointer);document.removeEventListener('keydown',key);};
+  },[saveOpen]);
   useEffect(()=>{const el=container.current!;const observer=new ResizeObserver(([entry])=>{
       // A hidden container reports 0×0; keep the last size so the image is not squeezed to one column.
       const {width,height}=entry.contentRect;if(width<1||height<1)return;
@@ -73,6 +85,15 @@ export function FractalView(p:Props) {
   };
   const marker=toPixel(p.c,size.w,size.h,p.camera),warn=precision(p.camera,size.w).warning;
   const zoom=(factor:number)=>{p.onStart();p.onCamera(zoomAt(p.camera,size.w/2,size.h/2,size.w,size.h,factor));};
+  const saveCurrent=()=>{setSaveOpen(false);const c=canvas.current!;c.toBlob(blob=>{if(blob)download(`fraktal-${p.kind}-${c.width}x${c.height}.png`,blob);},'image/png');};
+  const saveLarge=async(name:string,width:number,height:number)=>{
+    setSaveOpen(false);setExporting({name,progress:0});
+    const job=exportImage({kind:p.kind,camera:exportCamera(p.camera,size.w,size.h,width,height),c:p.c,width,height,settings:{...p.settings,samples:4}},progress=>setExporting({name,progress}));
+    cancelExport.current=job.cancel;
+    try{const blob=await job.promise;if(blob)download(`fraktal-${p.kind}-${width}x${height}.png`,blob);}
+    catch(e){setError(e instanceof Error?e.message:'Görsel oluşturulamadı.');}
+    cancelExport.current=null;setExporting(null);
+  };
   return <section className="fractal-view" aria-label={p.kind==='mandelbrot'?'Mandelbrot görünümü':'Julia görünümü'}>
     <div className="view-heading"><span><i className={p.kind==='julia'?'violet-dot':'green-dot'}/>{p.kind==='mandelbrot'?'Mandelbrot kümesi':'Julia kümesi'}<small>{p.kind==='mandelbrot'?'PARAMETRE DÜZLEMİ':'BAŞLANGIÇ DÜZLEMİ'}</small></span><span className="view-count">{p.settings.iterations} iterasyon</span></div>
     <div ref={container} className={'canvas-wrap '+(p.selecting?'selecting':'')} tabIndex={0} role="application" aria-label={`${p.kind==='mandelbrot'?'Mandelbrot':'Julia'} fraktal tuvali. Artı ve eksi yakınlaştırır, ok tuşları kaydırır, H sıfırlar, B geri alır.`} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={e=>{points.current.delete(e.pointerId);gesture.current.distance=0;}} onKeyDown={key}>
@@ -84,7 +105,8 @@ export function FractalView(p:Props) {
       {warn&&<div className="precision-warning">Hassasiyet sınırına yaklaşıldı. Yeni ayrıntılar güvenilir olmayabilir.</div>}
       {error&&<div className="precision-warning" role="alert">{error}</div>}
     </div>
-    <div className="view-toolbar"><div className="tool-group"><button aria-label={`${p.kind} yakınlaştır`} title="Yakınlaştır (+)" onClick={()=>zoom(.6)}><Icon name="plus"/></button><button aria-label={`${p.kind} uzaklaştır`} title="Uzaklaştır (−)" onClick={()=>zoom(1/.6)}><Icon name="minus"/></button><span className="separator"/><button aria-label={`${p.kind} ana görünüme dön`} title="Ana görünüm (H)" onClick={p.onHome}><Icon name="home"/></button><button aria-label={`${p.kind} önceki görünüm`} title="Önceki görünüm (B)" disabled={!p.canBack} onClick={p.onBack}><Icon name="undo"/></button></div><span className="render-label"><i className={stage==='Tamamlandı'?'green-dot':'amber-dot'}/>{stage}<b>{Math.round(progress*100)}%</b></span><span className="render-ms">{Math.round(duration)} ms</span></div>
+    <div className="view-toolbar"><div className="tool-group"><button aria-label={`${p.kind} yakınlaştır`} title="Yakınlaştır (+)" onClick={()=>zoom(.6)}><Icon name="plus"/></button><button aria-label={`${p.kind} uzaklaştır`} title="Uzaklaştır (−)" onClick={()=>zoom(1/.6)}><Icon name="minus"/></button><span className="separator"/><button aria-label={`${p.kind} ana görünüme dön`} title="Ana görünüm (H)" onClick={p.onHome}><Icon name="home"/></button><button aria-label={`${p.kind} önceki görünüm`} title="Önceki görünüm (B)" disabled={!p.canBack} onClick={p.onBack}><Icon name="undo"/></button><span className="separator"/><button aria-label={`${p.kind} görselini kaydet`} aria-expanded={saveOpen} title="Görseli kaydet" disabled={!!exporting} onClick={()=>setSaveOpen(v=>!v)}><Icon name="download"/></button></div>{saveOpen&&<div ref={saveMenu} className="save-menu"><b>Görseli kaydet</b><button disabled={stage!=='Tamamlandı'} onClick={saveCurrent}>Ekrandaki görüntü<span>{canvas.current?.width} × {canvas.current?.height}</span></button>{exportSizes.map(s=><button key={s.name} onClick={()=>saveLarge(s.name,s.width,s.height)}>{s.name}<span>{s.width} × {s.height}</span></button>)}<p>Full HD ve 4K, görünen alanı korur ve 4 örnek/piksel ile yeniden hesaplanır.</p></div>}<span className="render-label"><i className={stage==='Tamamlandı'?'green-dot':'amber-dot'}/>{stage}<b>{Math.round(progress*100)}%</b></span><span className="render-ms">{Math.round(duration)} ms</span></div>
     <div className="progress-track"><div style={{width:`${progress*100}%`}}/></div>
+    {exporting&&<div className="export-status" role="status"><span>{exporting.name} görsel hazırlanıyor<b>{Math.round(exporting.progress*100)}%</b></span><button onClick={()=>cancelExport.current?.()}>İptal</button></div>}
   </section>;
 }

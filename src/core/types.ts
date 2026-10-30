@@ -5,6 +5,6 @@ export type Palette = 'aurora' | 'spectral' | 'ember' | 'classic' | 'mono';
 export type Settings = { iterations: number; radius: number; palette: Palette; cycle: number; brightness: number; resolution: number; samples: number; optimize: boolean };
 export type Session = { version: 1; mode: Kind | 'split'; camera: Camera; juliaCamera: Camera; c: Complex; settings: Settings };
 export type RenderSpec = { kind: Kind; camera: Camera; c: Complex; settings: Settings; width: number; height: number };
-export type RenderRequest = { id: number; spec: RenderSpec; preview: boolean };
+export type RenderRequest = { id: number; spec: RenderSpec; preview: boolean; from?: number; to?: number };
 export type TileMessage = { id: number; y: number; rows: number; width: number; height: number; pixels: ArrayBuffer; progress: number; done: boolean; ms: number; preview: boolean };
 export type Metric = { id: number; kind: Kind; width: number; height: number; iterations: number; samples: number; ms: number; span: number };

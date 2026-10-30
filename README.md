@@ -37,7 +37,8 @@ Tarayıcı test betiği Windows'ta kurulu Chrome'u bulur. Başka bir ortamda `np
 - Durdur etkin işleri geçersiz kılar; Devam et ve Yeniden çiz mevcut parametrelerle yeni hesap başlatır. Bu düğmeler bir sonraki satır parçasında işçiye ulaşır; UI hemen güncellenir.
 - Yörünge paneli z₀'dan başlayarak N adım ve iki başlangıç arasındaki farkı çizim, tablo ve CSV olarak sunar. İlk değer dahil toplam en fazla N+1 kayıt olur. |z| > 10⁶ veya taşmada daha erken durur.
 - Ölçüm paneli sabit kamerada 180×120 / 360×240 ve 100 / 400 / 1200 iterasyonla altı gerçek koşulu sırasıyla çalıştırır. Bir örnek/piksel kullanır; seçili palet, eşik ve optimizasyon korunur. Grafikteki süreler işçinin hesabını ve parça zamanlayıcısını içerir, ana ekranın çizim aktarımını içermez.
-- PNG tamamlanmış aktif tuvali, bölünmüş görünümde iki tuvali yan yana kaydeder. Ayarlar altında JSON dışa/içe aktarımı bulunur. JSON doğrulanır; hatalı dosya mevcut oturumu bozmaz.
+- Tuvalin altındaki indirme düğmesi o görünümü ekrandaki boyutta, Full HD (1920×1080) veya 4K (3840×2160) PNG olarak kaydeder. Full HD ve 4K, görünen alanı kadrajda tutar ve birden çok işçiyle 4 örnek/piksel hesaplanır; işlem iptal edilebilir. Çok derin yakınlaştırmada yüksek çözünürlük sayısal hassasiyet sınırını aşmaz.
+- Üstteki PNG tamamlanmış aktif tuvali, bölünmüş görünümde iki tuvali yan yana kaydeder. Ayarlar altında JSON dışa/içe aktarımı bulunur. JSON doğrulanır; hatalı dosya mevcut oturumu bozmaz.
 - Görünümü paylaş iki kamerayı, c ve kalıcı hesap ayarlarını URL hash'ine kaydeder. Sayfa yeniden yüklenince görünüm geri gelir. Panoya erişim yoksa adres çubuğundaki URL kopyalanabilir. URL herhangi bir sunucuya parametre göndermez.
 
 ## Mimari
@@ -50,6 +51,7 @@ src/core/palettes.ts         deterministik renkler
 src/core/session.ts          JSON doğrulama, URL ve dosyalar
 src/engine/render.ts        saf satır hesabı ve render kimlik kapısı
 src/engine/fractal.worker.ts asenkron parça hesabı ve iptal
+src/engine/export.ts         çok işçili yüksek çözünürlüklü görsel üretimi
 src/components/FractalView.tsx  kamera girdileri ve kademeli çizim
 src/components/OrbitPanel.tsx   yörünge çizimi, tablo ve CSV
 src/components/BenchmarkPanel.tsx  sabit koşullu ölçümler
@@ -91,7 +93,7 @@ Canlı önizleme için girişler 70 ms süzülür; çok hızlı sürekli hareket
 
 ## Doğrulama sonuçları
 
-30 Ekim 2026 düzeltmelerinden sonra aynı bilgisayarda: `vitest run` **3 dosyada 56 test geçti**, TypeScript kontrolü ve üretim derlemesi başarılı, üretim `dist` üzerinde `scripts/browser-test.mjs` **22 kontrol geçti, JavaScript/HTTP hatası 0**.
+30 Ekim 2026 düzeltmelerinden sonra aynı bilgisayarda: `vitest run` **3 dosyada 59 test geçti**, TypeScript kontrolü ve üretim derlemesi başarılı, üretim `dist` üzerinde `scripts/browser-test.mjs` **23 kontrol geçti, JavaScript/HTTP hatası 0**.
 
 
 - `pnpm run build`: **TypeScript kontrolü ve Vite üretim derlemesi başarılı**.

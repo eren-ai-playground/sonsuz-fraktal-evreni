@@ -16,6 +16,10 @@ export function zoomAt(camera: Camera,x: number,y: number,w: number,h: number,fa
   const span=Math.min(12,Math.max(16*Number.EPSILON*Math.max(1,Math.abs(camera.re),Math.abs(camera.im))*w,camera.span*factor));
   return {re:target.re-(x/w-.5)*span,im:target.im-(.5-y/h)*span*h/w,span};
 }
+// Widens the span for a wider target so the whole visible area stays in frame.
+export function exportCamera(camera: Camera,viewW: number,viewH: number,w: number,h: number): Camera {
+  return {...camera,span:camera.span*Math.max(1,(w/h)/(viewW/viewH))};
+}
 export function pan(camera: Camera,dx: number,dy: number,w: number): Camera {
   return {...camera,re:camera.re-dx*camera.span/w,im:camera.im+dy*camera.span/w};
 }

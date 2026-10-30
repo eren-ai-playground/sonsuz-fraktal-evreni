@@ -1,10 +1,16 @@
 import {describe,it,expect} from 'vitest';
 import {add,multiply,magnitude,iterate,orbit} from '../src/core/complex';
 import {escape,analyticInterior,escapeRadius} from '../src/core/fractal';
-import {home,toComplex,toPixel,zoomAt,pan,precision} from '../src/core/camera';
+import {home,toComplex,toPixel,zoomAt,pan,precision,exportCamera} from '../src/core/camera';
 import {color,palettes} from '../src/core/palettes';
 import {defaultSession,parseSession,sessionHash,sessionFromURL} from '../src/core/session';
 import {renderRows,RenderGate} from '../src/engine/render';
+describe('Görsel dışa aktarma kadrajı',()=>{
+ const camera={re:-.5,im:.2,span:3};
+ it('dar hedefte yatay kapsam korunur',()=>{const c=exportCamera(camera,800,400,1000,1000);expect(c).toEqual(camera);});
+ it('geniş hedefte görünen yükseklik korunur ve merkez sabit kalır',()=>{const c=exportCamera(camera,800,800,1920,1080);expect(c.span*1080/1920).toBeCloseTo(camera.span,12);expect(c.re).toBe(camera.re);expect(c.im).toBe(camera.im);});
+ it('görünen alanın tamamı kadrajda kalır',()=>{for(const [w,h] of [[859,535],[356,420],[1600,500]]){const c=exportCamera(camera,w,h,3840,2160);expect(c.span).toBeGreaterThanOrEqual(camera.span);expect(c.span*2160/3840).toBeGreaterThanOrEqual(camera.span*h/w-1e-12);}});
+});
 describe('Kompleks aritmetik',()=>{
  it('toplar',()=>expect(add({re:2,im:-3},{re:-1,im:5})).toEqual({re:1,im:2}));
  it('çarpar ve i² = −1',()=>{expect(multiply({re:2,im:3},{re:4,im:-5})).toEqual({re:23,im:2});expect(multiply({re:0,im:1},{re:0,im:1})).toEqual({re:-1,im:0});});
