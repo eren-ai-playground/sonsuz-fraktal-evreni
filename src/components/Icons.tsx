@@ -1,0 +1,4 @@
+export function Icon({name,size=18}:{name:string;size?:number}) {
+  const paths:Record<string,string>={plus:'M12 5v14M5 12h14',minus:'M5 12h14',home:'m3 10 9-7 9 7M5 9v12h14V9M10 21v-7h4v7',undo:'M9 4 4 9l5 5M4 9h10a6 6 0 1 1 0 12',download:'M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5',share:'M18 8a3 3 0 1 0-3-3 3 3 0 0 0 3 3ZM6 15a3 3 0 1 0-3-3 3 3 0 0 0 3 3ZM18 22a3 3 0 1 0-3-3 3 3 0 0 0 3 3ZM9 10l6-4M9 14l6 4',target:'M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM12 2v4m0 12v4M2 12h4m12 0h4',refresh:'M20 8a8 8 0 1 0 0 8M20 3v5h-5',pause:'M8 4v16M16 4v16',play:'m8 4 12 8-12 8Z',arrow:'M4 12h16m-6-6 6 6-6 6',info:'M12 11v6m0-10v1M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z',copy:'M9 9h12v12H9ZM3 15V3h12',grid:'M3 3h7v7H3ZM14 3h7v7h-7ZM3 14h7v7H3ZM14 14h7v7h-7Z'};
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name]||paths.info}/></svg>;
+}
