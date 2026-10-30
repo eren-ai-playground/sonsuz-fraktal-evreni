@@ -2,8 +2,13 @@
 setlocal
 cd /d "%~dp0"
 where node >nul 2>&1
-if not errorlevel 1 goto start
+if not errorlevel 1 goto check
 echo Node.js 22.12 veya uzeri gerekli. Node.js kurup yeniden deneyin.
+pause
+exit /b 1
+:check
+if exist "dist\index.html" goto start
+echo Derleme bulunamadi. Once "pnpm install --frozen-lockfile" ve "pnpm run build" calistirin.
 pause
 exit /b 1
 :start

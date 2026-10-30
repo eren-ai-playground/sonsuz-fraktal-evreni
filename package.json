@@ -1,5 +1,7 @@
 {
   "name": "sonsuz-fraktal-evreni", "version": "1.0.0", "private": true, "type": "module",
+  "description": "Mandelbrot ve Julia kümelerini tarayıcıda keşfetmek için Türkçe, etkileşimli matematik laboratuvarı.",
+  "repository": { "type": "git", "url": "https://github.com/eren-ai-playground/sonsuz-fraktal-evreni.git" },
   "scripts": { "dev": "vite --host 127.0.0.1 --port 5191", "build": "tsc --noEmit && vite build", "test": "vitest run", "test:browser": "node scripts/browser-test.mjs", "preview": "vite preview --host 127.0.0.1 --port 5191", "start": "node scripts/serve.mjs" },
   "dependencies": { "react": "19.3.0", "react-dom": "19.3.0" },
   "devDependencies": { "@types/react": "19.3.0", "@types/react-dom": "19.3.0", "typescript": "5.9.3", "vite": "7.3.7", "vitest": "4.1.11", "jsdom": "29.0.1", "@playwright/test": "1.56.0" },

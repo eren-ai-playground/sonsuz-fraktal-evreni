@@ -1,108 +1,83 @@
 # Sonsuz Fraktal Evreni
 
-Tamamen Türkçe bir yerel matematik laboratuvarı. Mandelbrot ve doldurulmuş Julia görüntüleri hazır resimlerden değil, her örneğin gerçek `zₙ₊₁ = zₙ² + c` hesabından üretilir. React + TypeScript + Vite arayüzü, Web Worker hesabı ve Canvas 2D çizimi kullanır. Hesap açma, API anahtarı ve backend gerekmez.
+Mandelbrot ve Julia kümelerini tarayıcıda keşfetmek için Türkçe, etkileşimli bir matematik laboratuvarı. Görüntüler hazır resim değildir: her piksel `zₙ₊₁ = zₙ² + c` iterasyonuyla cihazında hesaplanır. Hesap açma, API anahtarı ve sunucu tarafı işlem gerekmez.
 
-## Kurulum ve çalıştırma
+![Mandelbrot kümesinin kıyısından Full HD bir görüntü](docs/mandelbrot-kiyi.png)
 
-Node.js **22.12 veya üzeri** gerekir. Proje klasöründe:
+## Özellikler
+
+- **Serbest keşif:** tekerlek, sürükleme, iki parmakla yakınlaştırma ve klavye kısayolları. Her küme için ayrı kamera geçmişi.
+- **Bölünmüş görünüm:** Mandelbrot üzerinde bir nokta seç, ona karşılık gelen Julia kümesini yanında canlı izle.
+- **Görsel kaydetme:** görünümü ekrandaki boyutta, Full HD veya 4K PNG olarak indir.
+- **Renk ve kalite ayarları:** beş palet, renk döngüsü, parlaklık, çözünürlük, kenar yumuşatma ve 3000'e kadar iterasyon.
+- **Sekiz yönlendirmeli deney:** iterasyon sınırı, kritik yörünge, bağlılık gibi konuları kendin dene.
+- **Yörünge paneli:** bir başlangıç noktasının adım adım yolunu çiz, iki yakın başlangıcı karşılaştır, CSV indir.
+- **Ölçüm paneli:** aynı kamerada altı gerçek çizimin süresini karşılaştır.
+- **Paylaşım ve kayıt:** görünümü URL ile paylaş, ayarları JSON olarak dışa ve içe aktar.
+- **Bağlam içi yardım:** özelliklerin yanındaki **?** düğmesi kısa bir açıklama açar.
+
+![Bölünmüş görünümde Mandelbrot ve Julia kümeleriyle uygulama arayüzü](docs/arayuz.png)
+
+![Tavşan parametresiyle Julia kümesi](docs/julia-tavsan.png)
+
+## Kurulum
+
+Node.js **22.12 veya üzeri** gerekir.
 
 ```sh
-npm install
-npm run dev
+pnpm install --frozen-lockfile
+pnpm run dev
 ```
 
-Adres: **http://127.0.0.1:5191**. İnternet paketlerin ilk kurulumunda gerekir; çalışan uygulama harici servis kullanmaz.
+Uygulama **http://127.0.0.1:5191** adresinde açılır. `pnpm` yoksa `npm install` ve `npm run dev` de çalışır.
 
-```sh
-npm test                 # matematik ve UI testleri
-npm run build            # TypeScript kontrolü ve üretim paketi
-npm run preview          # üretim paketini Vite ile aç
-npm start                # dist klasörünü yalnızca Node.js ile sun
-npm run test:browser     # çalışan yerel sunucuda gerçek tarayıcı kontrolleri
-```
+| Komut | Ne yapar |
+|---|---|
+| `pnpm test` | Matematik ve arayüz testlerini çalıştırır |
+| `pnpm run build` | TypeScript kontrolü yapar ve `dist` klasörünü üretir |
+| `pnpm start` | Derlenmiş `dist` klasörünü Node.js ile sunar (`PORT` ile port değişir) |
+| `pnpm run test:browser` | Çalışan sunucuda gerçek tarayıcı testlerini çalıştırır |
 
-Alternatif, kilitli kurulum: `pnpm install --frozen-lockfile`, ardından `pnpm test`, `pnpm run build`, `pnpm run dev`. Depo `pnpm-lock.yaml` ve esbuild yapılandırmasını içerir. Npm ilk kurulumda kendi kilit dosyasını oluşturur.
+Derleme sonrası Windows'ta `BASLAT.cmd` dosyasına çift tıklamak sunucuyu başlatır ve tarayıcıyı açar. `index.html` dosyasını doğrudan açmak modül ve worker kısıtları nedeniyle çalışmaz.
 
-ZIP içindeki `dist` klasörü hazır derlemedir. Windows'ta `BASLAT.cmd` dosyasına çift tıklayın; sunucu başlar ve **http://127.0.0.1:5191** varsayılan tarayıcıda açılır. Node.js gerekir. Paket kurmadan `node scripts/serve.mjs` ile de açılabilir. `index.html` dosyasına çift tıklamak modül/worker güvenlik kısıtları nedeniyle desteklenmez; yerel HTTP sunucusunu kullanın. PORT ortam değişkeni `npm start` portunu değiştirebilir.
+Tarayıcı testleri Windows'ta kurulu Chrome'u kullanır. Başka bir ortamda `npx playwright install chromium` çalıştır veya `BROWSER_PATH` ile bir Chromium yolu ver. `TEST_URL` test edilecek adresi değiştirir.
 
-Tarayıcı test betiği Windows'ta kurulu Chrome'u bulur. Başka bir ortamda `npx playwright install chromium` veya `BROWSER_PATH` ortam değişkeniyle bir Chromium yolu kullanın. `TEST_URL` başka bir yerel sunucu adresini seçebilir. Her test kendi tarayıcı bağlamında çalışır.
+## Kısayollar
 
-## Kullanım
+| Girdi | Etki |
+|---|---|
+| Tekerlek / iki parmak | İmleçte yakınlaştır |
+| Sürükleme / ok tuşları | Kaydır |
+| `+` / `−` | Yakınlaştır, uzaklaştır |
+| `H` | Ana görünüm |
+| `B` | Önceki görünüm |
+| Mandelbrot'a tıklama | Julia parametresi c'yi seç |
 
-- Özelliklerin yanındaki **?** düğmesi kısa bir açıklama açar. Dışarı tıklamak, Escape veya sayfayı kaydırmak açıklamayı kapatır.
-- Tekerlek imleçte yakınlaştırır; sürükleme kamerayı kaydırır. Dokunmatik iki parmak pinch desteklenir. Tuval `touch-action: none` kullanır; çevresindeki sayfa kaydırılabilir.
-- Tuvale Tab ile odaklanın: `+` / `−` zoom, oklar kaydırma, `H` ana görünüm, `B` bir önceki kamera. Her kümenin kamera geçmişi bağımsızdır; en son 50 görünüm tutulur.
-- Mandelbrot'ta bir tık c seçer. “Julia noktası seç” açıkken sürükleyerek c seçilir. Bölünmüş ekran iki kümenin bağımsız kameralarını birlikte gösterir.
-- Soldaki ayarlar iterasyon, kaçış eşiği, palet, renk döngüsü, parlaklık, çözünürlük ve örneklemeyi değiştirir. Julia parametresi elle veya hazır örneklerle girilebilir.
-- Durdur etkin işleri geçersiz kılar; Devam et ve Yeniden çiz mevcut parametrelerle yeni hesap başlatır. Bu düğmeler bir sonraki satır parçasında işçiye ulaşır; UI hemen güncellenir.
-- Yörünge paneli z₀'dan başlayarak N adım ve iki başlangıç arasındaki farkı çizim, tablo ve CSV olarak sunar. İlk değer dahil toplam en fazla N+1 kayıt olur. |z| > 10⁶ veya taşmada daha erken durur.
-- Ölçüm paneli sabit kamerada 180×120 / 360×240 ve 100 / 400 / 1200 iterasyonla altı gerçek koşulu sırasıyla çalıştırır. Bir örnek/piksel kullanır; seçili palet, eşik ve optimizasyon korunur. Grafikteki süreler işçinin hesabını ve parça zamanlayıcısını içerir, ana ekranın çizim aktarımını içermez.
-- Tuvalin altındaki indirme düğmesi o görünümü ekrandaki boyutta, Full HD (1920×1080) veya 4K (3840×2160) PNG olarak kaydeder. Full HD ve 4K, görünen alanı kadrajda tutar ve birden çok işçiyle 4 örnek/piksel hesaplanır; işlem iptal edilebilir. Çok derin yakınlaştırmada yüksek çözünürlük sayısal hassasiyet sınırını aşmaz.
-- Üstteki PNG tamamlanmış aktif tuvali, bölünmüş görünümde iki tuvali yan yana kaydeder. Ayarlar altında JSON dışa/içe aktarımı bulunur. JSON doğrulanır; hatalı dosya mevcut oturumu bozmaz.
-- Görünümü paylaş iki kamerayı, c ve kalıcı hesap ayarlarını URL hash'ine kaydeder. Sayfa yeniden yüklenince görünüm geri gelir. Panoya erişim yoksa adres çubuğundaki URL kopyalanabilir. URL herhangi bir sunucuya parametre göndermez.
+Klavye kısayolları tuval odaktayken çalışır; tuvale Tab ile odaklanılabilir.
 
-## Mimari
+## Nasıl çalışır
+
+Mandelbrot için `z₀ = 0` ve `c = piksel`, Julia için `z₀ = piksel` ve `c` seçili parametredir. `|z|`, kaçış yarıçapını geçtiğinde nokta kaçmış sayılır ve kaçış süresi renge çevrilir. Keyfi `c` değerleri için `(1 + √(1 + 4|c|)) / 2` alt sınırı otomatik uygulanır.
+
+Hesap Web Worker'da çift hassasiyetli sayılarla yapılır, görüntü Canvas 2D'ye çizilir. Önce küçük bir önizleme, ardından tam çözünürlük hesaplanır; yeni bir hareket eski işi iptal eder. Full HD ve 4K görseller birden çok işçiye bölünerek ve piksel başına dört örnekle üretilir.
 
 ```text
-src/core/complex.ts          kompleks aritmetik ve yörünge
-src/core/fractal.ts          kaçış, güvenli yarıçap ve analitik iç test
-src/core/camera.ts           koordinat dönüşümü, pan, zoom ve hassasiyet
-src/core/palettes.ts         deterministik renkler
-src/core/session.ts          JSON doğrulama, URL ve dosyalar
-src/engine/render.ts        saf satır hesabı ve render kimlik kapısı
-src/engine/fractal.worker.ts asenkron parça hesabı ve iptal
-src/engine/export.ts         çok işçili yüksek çözünürlüklü görsel üretimi
-src/components/FractalView.tsx  kamera girdileri ve kademeli çizim
-src/components/OrbitPanel.tsx   yörünge çizimi, tablo ve CSV
-src/components/BenchmarkPanel.tsx  sabit koşullu ölçümler
-src/components/Help.tsx      soru işareti düğmesi ve açılır açıklama
-src/data/help.ts             özellik açıklama metinleri
-src/data/experiments.ts      sekiz deney ve uygulanabilir başlangıçlar
-src/App.tsx                 oturum, ayarlar, sayfalar ve dışa aktarım
-tests/                      çekirdek, UI ve ölçüm regresyon testleri
-scripts/browser-test.mjs    gerçek tarayıcı entegrasyon kontrolleri
-scripts/serve.mjs            hazır derlemeyi yerel HTTP ile sunma
+src/core/        kompleks aritmetik, kaçış testi, kamera, palet, oturum
+src/engine/      satır hesabı, worker, yüksek çözünürlüklü dışa aktarma
+src/components/  tuval, yörünge ve ölçüm panelleri, yardım düğmesi
+src/data/        deneyler ve açıklama metinleri
+src/App.tsx      oturum, ayarlar ve sayfalar
+tests/           birim ve arayüz testleri
+scripts/         yerel sunucu ve gerçek tarayıcı testleri
 ```
 
-## Algoritma ve bilimsel sınırlar
+## Sınırlar
 
-Mandelbrot için z₀ = 0, c = piksel; Julia için z₀ = piksel, c = seçili parametre. Kaçış kontrolü `|z| > R` kullanır. Sınırı aşmayan noktalar siyah çizilir; sonlu iterasyon kararı kesin üyelik iddiası taşımaz. Görüntülenen Julia içi **doldurulmuş Julia** kümesinin yaklaşımıdır; matematiksel Julia onun sınırıdır.
+- **Sonsuz zoom yoktur.** Hesap 64 bit sayılarla yapılır; yakınlaştırma yaklaşık 10¹² katta durur ve görüntü bu sınıra yaklaşırken pikselleşir. Uygulama sınıra yaklaşınca uyarı gösterir. Perturbasyon veya keyfi hassasiyet modu yoktur.
+- **Siyah piksel küme üyeliğini kanıtlamaz.** Yalnızca seçilen adım sayısında kaçmadığını gösterir. Renkler de matematiksel kümenin parçası değil, kaçış süresinin görsel eşlemesidir.
+- **Hesap işlemcide yapılır.** GPU kullanılmaz; yüksek iterasyon ve 4K seçenekleri zaman alabilir. Normal gezinmede görünüm başına bir işçi çalışır.
+- **Tarayıcı gereksinimi:** modül worker destekleyen güncel bir tarayıcı gerekir.
 
-Mandelbrot'ta R en az 2'dir. Keyfi Julia c değerleri için `R² − R ≥ |c|` yeterli koşulunu sağlayan `(1 + √(1 + 4|c|))/2` alt sınırı otomatik uygulanır. Büyük yarıçaplar kaçış adımını ve sonlu sınırda kaçmamış piksel sayısını değiştirebilir. c=0 disk içi/dışı test edilir; sınır pikselleri üyelik kanıtı diye test edilmez.
+## Kaynak
 
-Yumuşak renk `μ = n + 1 − log₂(log|zₙ|)` kullanır; klasik renk n tam sayısını kullanır. Renkler kaçış zamanının görsel eşlemesidir. Parlaklık ve döngü matematiksel tanımı değiştirmez. Mandelbrot ana kardioidi ve period-2 diskinin sıkı iç testleri yuvarlama için 10⁻¹⁴ payla uygulanır; kapatılabilir. Optimizasyonun açık/kapalı sonuçları örnek ızgarada karşılaştırılır.
-
-Piksel aralığı yatay span / çizim genişliğidir. Dönüşüm dikey span = yatay span × yükseklik / genişlik kullanır; kompleks x/y birimleri eşittir. Zoom seçilen imleç noktasını sabit tutar. Ana görünüm yatay kapsamı korur; dar telefonlarda daha fazla dikey alan görünür.
-
-## Performans ve makul varsayımlar
-
-
-Her görünüm bir işçi kullanır. Önizleme boyutları nihai boyutun %28'idir, örneklemesi 1'dir. 70 ms hareketsizlik sonrası önizleme; bitince 120 ms bekleme sonrası tam geçiş yapılır. Gezinirken önceki gerçek görüntü korunur. Yeni kamera/ayar işi iptal eder ve 1–8 satırlık parçalardan sonra işçi yeni işi kabul eder; eski kimlikli sonuçlar tuvale yazılamaz. Uzun senkron satır parçası sırasında işçi iptali gecikebilir; arayüz hesabı ana iş parçacığında değildir.
-
-Her görünüm en fazla 1600×1200, ayrıca en fazla 1,8 milyon piksele ölçeklenir. Aynı anda iki aktif görünüm, ölçüm açıkken bir ek işçi vardır. Yüzlerce iş kuyruğa eklenmez; önceki işin döngüsü sonlandırılır. İterasyon 50–3000, çözünürlük 0,5 / 0,75 / 1 / 1,5×, örnekleme 1 veya 4'tür. Son 12 tamamlanmış render özeti tutulur; bu kayıtlar farklı koşullarda olabilir.
-
-Renk hareketi kapalı başlar. Açılırsa 2,4 saniyede bir tam renk/hesap güncellemesi yapılır; pahalı ayarlarda kapalı tutulması uygundur. Durdurulunca hareket de durur. FPS raporlanmaz, çünkü statik fraktal işçilerinin hesap süresi ekran yenileme FPS'sine eşit değildir. Süre metrikleri `performance.now()` ile işçide ölçülür; ana ekrandaki değer son tamamlanan ayrıntı geçişidir.
-
-## Hassasiyet ve eksikler
-
-IEEE 754 JavaScript Number çift hassasiyetlidir. Piksel aralığı `64 × Number.EPSILON × max(1, |merkez Re|, |merkez Im|)` altındaysa uyarı gösterilir. Zoom minimumu CSS pikseline göre 16 ε'dir; yüksek çözünürlük seçimi gerçek örnek aralığını biraz daha küçültebilir. Bu kaba koruma genel yuvarlama hata garantisi değildir. Keyfi hassasiyet/decimal veya perturbasyon modu uygulanmadı; sınırsız doğru yakınlaştırma iddiası yoktur.
-
-Canlı önizleme için girişler 70 ms süzülür; çok hızlı sürekli hareket boyunca önceki görüntü kalabilir. Julia parametresini değiştirmek Mandelbrot hesabını yenilemez; yalnızca işaretçi güncellenir. PNG ekranın UI metinlerini içermez; fraktal pikselleri içerir. Seçili deney ve geçici durdurma/animasyon durumu URL/JSON oturumuna dahil edilmez. İşçiler güncel modül-worker destekli tarayıcı gerektirir.
-
-Önerilen geliştirmeler: perturbasyon tabanlı derin zoom ve doğrulanmış hata sınırları, iterasyon tamponu ile yalnızca renk değiştiren ucuz animasyon, adaptif kaçış örneklemesi, daha fazla cihazda uzun süreli performans ölçümü.
-
-## Doğrulama sonuçları
-
-30 Ekim 2026 düzeltmelerinden sonra aynı bilgisayarda: `vitest run` **3 dosyada 59 test geçti**, TypeScript kontrolü ve üretim derlemesi başarılı, üretim `dist` üzerinde `scripts/browser-test.mjs` **23 kontrol geçti, JavaScript/HTTP hatası 0**.
-
-
-- `pnpm run build`: **TypeScript kontrolü ve Vite üretim derlemesi başarılı**.
-- Üretim `dist` klasörünü sunan yerel HTTP sunucusunda `TEST_URL=http://127.0.0.1:5192` ile `node scripts/browser-test.mjs`: **20 kontrol geçti, JavaScript/HTTP hatası 0**. Sonradan genişletilen sonlu kamera doğrulaması ayrıca URL birim testiyle doğrulandı; render kaynakları bu değişiklikten etkilenmez.
-- Masaüstü 1440 piksel; telefon 360/390 ve tablet 768 pikselde yatay taşma kontrolü, ayrıca masaüstü ve telefon PNG'lerinin görsel incelemesi yapıldı.
-
-Matematik testleri c=0, −1, 2; Julia c=0 iç/dış; kompleks işlemler; kamera tersi, en-boy oranı ve zoom odak sabitliği; palet determinizmi; JSON/URL hataları; tile render; iptal kimliği ve UI davranışlarını kapsar. Ölçüm paneli regresyon testi, React toplu güncellemesinde altı koşulun doğru satırlara atanmasını denetler. Tarayıcı testleri gerçek worker, gerçek canvas, dosya içeriği, kamera girdileri ve iki parmak etkileşimini kontrol eder. `test-results` tanılama ve QA dosyalarını içerir, kaynak dağıtımına gerekmez.
-
-
-## Öğrenme kaynağı
-
-[Cornell Math Explorers' Club — The Mandelbrot Set](https://pi.math.cornell.edu/~lipa/mec/lesson5.html): kompleks iterasyon, doldurulmuş Julia, kritik yörünge ve bağlılık ilişkisi için birincil üniversite kaynağı. Uygulamada sonlu hesapla matematiksel tanım arasındaki ayrım korunur.
+[Cornell Math Explorers' Club: The Mandelbrot Set](https://pi.math.cornell.edu/~lipa/mec/lesson5.html)
